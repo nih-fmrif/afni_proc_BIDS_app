@@ -1,32 +1,34 @@
-## An example BIDS App (template repository)
-Every BIDS App needs to follow a minimal set of command arguments common across
-all of the Apps. This allows users and developers to easily use and integrate
-BIDS Apps with their environment.
-
-This is a minimalist example of a BIDS App consisting of a Dockerfile and a simple
-entry point script (written in this case in Python) accepting the standard BIDS
-Apps command line arguments. This repository can be used as a template for new BIDS Apps.
-
-For more information about the specification of BIDS Apps see [here](https://docs.google.com/document/d/1E1Wi5ONvOVVnGhj21S1bmJJ4kyHFT7tkxnV3C23sjIE/edit#).
+## Prototype AFNI preprocessing app
 
 ### Description
-This is a placeholder for a short description explaining to the user what your App will doing.
+This is a prototype AFNI bids app implmenting participant level preprocessing with afni_proc.py.
+This pipeline is currently doing temporal alignment, nonlinear registration to standard space,
+ bluring of 4 mm, masking, and scaling for all epis in the input bids dataset using the following 
+ afni proc command:
+```afni_proc.py -subj_id {subj_id} \
+ -script proc.bids -scr_overwrite -out_dir {out_dir} \
+-blocks tshift align tlrc volreg blur mask scale \
+-copy_anat {anat_path} -tcat_remove_first_trs 2 \
+-dsets {epi_paths} -volreg_align_to third \
+-volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash```
 
 ### Documentation
-Provide a link to the documention of your pipeline.
+Documenation for afni_proc.py is available [here](https://afni.nimh.nih.gov/pub/dist/doc/program_help/afni_proc.py.html).
 
 ### How to report errors
-Provide instructions for users on how to get help and report errors.
+Specific issues with this BIDS App should be reported on its [issues page](https://github.com/nih-fmrif/afni_proc_BIDS_app/issues).
+AFNI issues should be posted to the [AFNI Message Board](https://afni.nimh.nih.gov/afni/community/board/list.php?1)
 
 ### Acknowledgements
-Describe how would you would like users to acknowledge use of your App in their papers (citation, a paragraph that can be copy pasted, etc.)
+Please cite the 1996 paper if you use AFNI:
+ Cox RW (1996) AFNI: Software for analysis and visualization of functional magnetic resonance neuroimages. Comput Biomed Res 29(3):162–173
 
 ### Usage
 This App has the following command line arguments:
 
 		usage: run.py [-h]
 		              [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
-		              bids_dir output_dir {participant,group}
+		              bids_dir output_dir
 
 		Example BIDS App entry point script.
 
@@ -37,9 +39,6 @@ This App has the following command line arguments:
 		                        If you are running a group level analysis, this folder
 		                        should be prepopulated with the results of
 		                        the participant level analysis.
-		  {participant,group}   Level of the analysis that will be performed. Multiple
-		                        participant level analyses can be run independently
-		                        (in parallel).
 
 		optional arguments:
 		  -h, --help            show this help message and exit
@@ -59,18 +58,5 @@ To run it in participant level mode (for one participant):
 		bids/example \
 		/bids_dataset /outputs participant --participant_label 01
 
-After doing this for all subjects (potentially in parallel), the group level analysis
-can be run:
-
-    docker run -i --rm \
-		-v /Users/filo/data/ds005:/bids_dataset:ro \
-		-v /Users/filo/outputs:/outputs \
-		bids/example \
-		/bids_dataset /outputs group
-
 ### Special considerations
-Describe whether your app has any special requirements. For example:
-
-- Multiple map reduce steps (participant, group, participant2, group2 etc.)
-- Unusual memory requirements
-- etc.
+This is a very early prototype. More functionality is likely coming. Expect breaking changes.

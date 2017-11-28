@@ -10,9 +10,16 @@ afni_proc.py -subj_id {subj_id} \
  -script proc.bids -scr_overwrite -out_dir {out_dir} \
 -blocks tshift align tlrc volreg blur mask scale \
 -copy_anat {anat_path} -tcat_remove_first_trs 2 \
--dsets {epi_paths} -volreg_align_to third \
+-dsets {epi_paths} -volreg_align_to MIN_OUTLIER \
 -volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash
 ```
+
+python /opt/afni/afni_proc.py -subj_id {subj_id} \
+                    -script proc.bids -scr_overwrite -out_dir {out_dir} \
+                    -blocks tshift align tlrc volreg blur mask scale \
+                    -copy_anat {anat_path} -tcat_remove_first_trs 0 \
+                    -dsets {epi_paths} -volreg_align_to MIN_OUTLIER \
+                    -volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash
 
 ### Documentation
 Documenation for afni_proc.py is available [here](https://afni.nimh.nih.gov/pub/dist/doc/program_help/afni_proc.py.html).
@@ -54,6 +61,20 @@ This App has the following command line arguments:
 		                        not include "sub-"). If this parameter is not provided
 		                        all subjects will be analyzed. Multiple participants
 		                        can be specified with a space separated list.
+		  --afni_proc AFNI_PROC
+                                Optional: command string for afni proc. Parameters
+                                that vary by subject should be encapsulated in curly
+                                braces and must all be included {{subj_id}},
+                                {{out_dir}}, {{anat_path}}, or {{epi_paths}}.The first
+                                _T1w for each subject will currently be used as the
+                                anat.All of the _bold will be used as the
+                                functionals.Example:-subj_id {subj_id} -script
+                                proc.bids -scr_overwrite -out_dir {{out_dir}} -blocks
+                                tshift align tlrc volreg blur mask scale -copy_anat
+                                {{anat_path}} -tcat_remove_first_trs 0 -dsets
+                                {{epi_paths}} -volreg_align_to MIN_OUTLIER
+                                -volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0
+
 
 To run it in participant level mode (for one participant):
 

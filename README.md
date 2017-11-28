@@ -41,6 +41,9 @@ This App has the following command line arguments:
 		                        If you are running a group level analysis, this folder
 		                        should be prepopulated with the results of
 		                        the participant level analysis.
+		  {participant}         Level of the analysis that will be performed. Multiple
+	                            participant level analyses can be run independently
+	                            (in parallel). Only "participant" is currently supported.
 
 		optional arguments:
 		  -h, --help            show this help message and exit

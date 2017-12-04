@@ -222,6 +222,10 @@ else:
 
 run(('bids-validator %s'%args.bids_dir).split(' '))
 
+# Get path for report directory
+reports_dir = os.path.join(args.output_dir,"reports")
+
+
 subjects_to_analyze = []
 # only for a subset of subjects
 if args.participant_label:
@@ -272,7 +276,7 @@ for subject_label in subjects_to_analyze:
             pb_df = pd.DataFrame(pb_lod)
 
 
-            config = {
+            config['blocks'] = {
                 'subj_id': pb_df.subj.unique()[0],
                 'blocks': ' '.join(pb_df.block.unique()),
             }
@@ -303,6 +307,8 @@ for subject_label in subjects_to_analyze:
                 os.mkdir(subj_qc_dir)
             if not os.path.exists(subj_qc_img_dir):
                 os.mkdir(subj_qc_img_dir)
+            if not os.path.exists(reports_dir):
+                os.mkdir(reports_dir)
 
             try:
 
@@ -341,7 +347,7 @@ for subject_label in subjects_to_analyze:
                 pass
 
             tpl = IndividualTemplate()
-            tpl.generate_conf(config, os.path.join(subj_qc_dir, 'individual.html'))
+            tpl.generate_conf(config, os.path.join(reports_dir, 'sub-%s_individual.html'%subject_label))
 
             with open(os.path.join(subj_qc_dir, 'individual.json'), 'w') as h:
                 json.dump(config, h)
@@ -351,6 +357,8 @@ for subject_label in subjects_to_analyze:
             all_configs.append(json.load(h))
 
 if args.analysis_level == 'group':
+    if not os.path.exists(reports_dir):
+        os.mkdir(reports_dir)
     tpl = GroupTemplate()
     #print(all_configs)
-    tpl.generate_conf({'configs':all_configs}, os.path.join(args.output_dir, 'group.html'))
+    tpl.generate_conf({'configs':all_configs}, os.path.join(reports_dir, 'group.html'))

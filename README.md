@@ -10,8 +10,10 @@ afni_proc.py -subj_id {subj_id} \
  -script proc.bids -scr_overwrite -out_dir {out_dir} \
 -blocks tshift align tlrc volreg blur mask scale \
 -copy_anat {anat_path} -tcat_remove_first_trs 0 \
--dsets {epi_paths} -volreg_align_to MIN_OUTLIER \
--volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash
+-dsets {epi_paths} -align_opts_aea -cost lpc+ZZ -giant_move \
+-tlrc_base MNI152_T1_2009c+tlrc -tlrc_NL_warp \
+-volreg_align_to MIN_OUTLIER \
+-volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash"""
 ```
 
 ### Documentation
@@ -65,8 +67,10 @@ This App has the following command line arguments:
                                 proc.bids -scr_overwrite -out_dir {{out_dir}} -blocks
                                 tshift align tlrc volreg blur mask scale -copy_anat
                                 {{anat_path}} -tcat_remove_first_trs 0 -dsets
-                                {{epi_paths}} -volreg_align_to MIN_OUTLIER
-                                -volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0
+                                {{epi_paths}} -align_opts_aea -cost lpc+ZZ -giant_move
+                                -tlrc_base MNI152_T1_2009c+tlrc -tlrc_NL_warp 
+                                -volreg_align_to MIN_OUTLIER 
+                                -volreg_align_e2a -volreg_tlrc_warp -blur_size 4.0 -bash"""
 
 
 To run it in participant level mode (for one participant):

@@ -37,7 +37,7 @@ ENTRYPOINT ["/neurodocker/startup.sh"]
 #--------------------
 ENV PATH=/opt/afni:$PATH
 RUN apt-get update -qq && apt-get install -yq --no-install-recommends ed gsl-bin libglu1-mesa-dev libglib2.0-0 libglw1-mesa \
-    libgomp1 libjpeg62 libxm4 netpbm tcsh xfonts-base xvfb python python3 \
+    libgomp1 libjpeg62 libxm4 netpbm tcsh xfonts-base xvfb python python3 python3-pip python3-setuptools python3-tk\
     && libs_path=/usr/lib/x86_64-linux-gnu \
     && if [ -f $libs_path/libgsl.so.19 ]; then \
            ln $libs_path/libgsl.so.19 $libs_path/libgsl.so.0; \
@@ -57,7 +57,8 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends ed gsl-bin
     && echo "Downloading AFNI ..." \
     && mkdir -p /opt/afni \
     && curl -sSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
-    | tar zx -C /opt/afni --strip-components=1
+    | tar zx -C /opt/afni --strip-components=1 \
+    && pip3 install jinja2 pandas matplotlib
 
 #-----------------------
 # Install bids validator
@@ -75,7 +76,7 @@ RUN npm install -g bids-validator@0.19.2
 COPY run.py /run.py
 
 COPY version /version
-ENTRYPOINT ["python3 /run.py"]
+#ENTRYPOINT ["/usr/bin/python3 /run.py"]
 
 #--------------------------------------
 # Save container specifications to JSON

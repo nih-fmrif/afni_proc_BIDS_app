@@ -108,7 +108,8 @@ def make_montage(prefix, ulay=None, olay=None, cbar='FreeSurfer_Seg_i255',
     ' -montx %d'%montx + \
     ' -monty %d'%monty + \
     ' -blowup %d'%blowup + \
-    ' -func_range_perc %f' %func_range_perc
+    ' -func_range_perc %f' %func_range_perc + \
+    ' -save_ftype JPEG'
     return cmd
 
 def make_motion_plot(subj_dir, subj_id):
@@ -306,10 +307,7 @@ for subject_label in subjects_to_analyze:
             try:
 
                 anat_path = os.path.join(subj_out_dir, 'anat_final.%s+tlrc.HEAD'%subject_label)
-                #print(subprocess.check_output(["3dinfo", "-extent", anat_path]))
                 anat_exts = np.array([float(ss) for ss in subprocess.check_output(["3dinfo", "-extent", anat_path]).decode().split('\t')])
-                #anat_rext = float(subprocess.check_output(["3dinfo", "-Rextent", anat_path]))
-                #anat_lext = float(subprocess.check_output(["3dinfo", "-Lextent", anat_path]))
                 anat_lrext = np.abs(anat_exts[0]) + np.abs(anat_exts[1])
                 anat_mont_dim = np.floor(np.sqrt(anat_lrext))
                 print("#######\n mont_dim = %f \n#########"%anat_mont_dim)
@@ -326,18 +324,19 @@ for subject_label in subjects_to_analyze:
 
                 run(make_montage(os.path.join(subj_qc_img_dir, 'functional_montage'),
                                  ulay=anat_path,
-                                 olay=func_path, montx=func_mont_dim, monty=func_mont_dim,
+                                 olay=func_path, montx=anat_mont_dim, monty=anat_mont_dim,
                                  cbar='gray_scale', opacity=9), shell=True)
 
-                with open(os.path.join(subj_qc_img_dir, 'anatomical_montage.sag.png'), 'rb') as h:
+                with open(os.path.join(subj_qc_img_dir, 'anatomical_montage.sag.jpg'), 'rb') as h:
                     anat_bs = base64.b64encode(h.read()).decode()
-                with open(os.path.join(subj_qc_img_dir, 'functional_montage.sag.png'), 'rb') as h:
+                with open(os.path.join(subj_qc_img_dir, 'functional_montage.sag.jpg'), 'rb') as h:
                     func_bs = base64.b64encode(h.read()).decode()
 
                 config['volreg_report_anat'] = anat_bs
                 config['volreg_report_func'] = func_bs
-                config['anat_ap_ext'] = np.abs(anat_exts[2]) + np.abs(anat_exts[3])
-                config['anat_is_ext'] = np.abs(anat_exts[4]) + np.abs(anat_exts[5])
+                config['anat_ap_ext'] = np.abs(anat_exts[2]) + np.abs(anat_exts[3]) + 1
+                config['anat_is_ext'] = np.abs(anat_exts[4]) + np.abs(anat_exts[5]) + 1
+                print("#######\n anat_ap_ext = %f \n#########"%config['anat_ap_ext'])
             except FileNotFoundError:
                 pass
 

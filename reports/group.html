@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -213,15 +214,20 @@ span.qa-pass {
   <script type="text/javascript">
 
     var image_tracker_{{ config['subj_id'] }} = 'anat';
+    var anat_src_{{ config['subj_id'] }} = null
      
     function change_{{ config['subj_id'] }}(){
     var image = document.getElementById("spriteImg_{{ config['subj_id'] }}");
+
     if(image_tracker_{{ config['subj_id'] }}=='anat'){
-    image.src="data:image/jpeg;base64,{{ config['volreg_report_func'] }}";
-    image_tracker_{{ config['subj_id'] }}='func';
-    }
-    else{
-    image.src="data:image/jpeg;base64,{{ config['volreg_report_anat'] }}";
+      if(anat_src_{{ config['subj_id'] }}){
+      }else{
+        anat_src_{{ config['subj_id'] }}=image.src
+      }
+      image.src="data:image/jpeg;base64,{{ config['volreg_report_func'] }}";
+      image_tracker_{{ config['subj_id'] }}='func';
+    }else{
+    image.src=anat_src_{{ config['subj_id'] }};
     image_tracker_{{ config['subj_id'] }}='anat';
     }
     }
